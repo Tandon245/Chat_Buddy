@@ -18,8 +18,23 @@ class SignUp : AppCompatActivity() {
     private lateinit var btnSignUp: Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_sign_up)
+        edtName = findViewById(R.id.edtName)
+        edtEmail = findViewById(R.id.edt_email)
+        edtPassword = findViewById(R.id.edt_password)
+        btnSignUp = findViewById(R.id.btnSignUp)
+
+
+        btnSignUp.setOnClickListener {
+            val email = edtEmail.text.toString()
+            val password = edtPassword.text.toString()
+            signUp(email, password);
+        }
 
     }
+}
+
+private fun signUp(email: String, password: String) {
+//    logic for signUp
+
 }

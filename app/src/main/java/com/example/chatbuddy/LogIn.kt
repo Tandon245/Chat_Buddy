@@ -43,6 +43,6 @@ class LogIn : AppCompatActivity() {
     }
 
     private fun login(email: String, password: String) {
-
+//        Logic for login
     }
 }
