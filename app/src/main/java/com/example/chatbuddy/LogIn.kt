@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -18,7 +19,10 @@ class LogIn : AppCompatActivity() {
     private lateinit var btnLogIn: Button
     private lateinit var btnSignUp: Button
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        supportActionBar?.hide()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_log_in)
 
@@ -43,6 +47,17 @@ class LogIn : AppCompatActivity() {
     }
 
     private fun login(email: String, password: String) {
-//        Logic for login
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
+            if (task.isSuccessful) {
+                intent = Intent(this@LogIn, MainActivity::class.java)
+                startActivity(intent)
+
+            } else {
+                Toast.makeText(this@LogIn, "User does not exist", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
+
 }
+
+
