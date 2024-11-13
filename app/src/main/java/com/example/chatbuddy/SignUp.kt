@@ -2,13 +2,12 @@ package com.example.chatbuddy
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Patterns
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
@@ -17,7 +16,6 @@ class SignUp : AppCompatActivity() {
     private lateinit var edtName: EditText
     private lateinit var edtEmail: EditText
     private lateinit var edtPassword: EditText
-
     private lateinit var mDbRef: DatabaseReference
     private lateinit var btnSignUp: Button
 
@@ -34,9 +32,9 @@ class SignUp : AppCompatActivity() {
         mAuth = FirebaseAuth.getInstance()
 
         btnSignUp.setOnClickListener {
-            val email = edtEmail.text.toString().trim()
-            val password = edtPassword.text.toString().trim()
-            val name = edtName.text.toString().trim()
+            val email = edtEmail.text.toString()
+            val password = edtPassword.text.toString()
+            val name = edtName.text.toString()
 
             if (validateInput(name, email, password)) {
                 signUp(name, email, password)
@@ -45,63 +43,40 @@ class SignUp : AppCompatActivity() {
     }
 
     private fun validateInput(name: String, email: String, password: String): Boolean {
-        return when {
-            name.isEmpty() -> {
-                edtName.error = "Please enter your name"
-                edtName.requestFocus()
-                false
-            }
-            email.isEmpty() -> {
-                edtEmail.error = "Please enter your email"
-                edtEmail.requestFocus()
-                false
-            }
-            password.isEmpty() -> {
-                edtPassword.error = "Please enter your password"
-                edtPassword.requestFocus()
-                false
-            }
-            password.length < 6 -> {
-                edtPassword.error = "Password must be at least 6 characters"
-                edtPassword.requestFocus()
-                false
-            }
-            else -> true
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show()
+            return false
         }
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(this, "Invalid email format", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        val passwordPattern = Regex("^(?=.*[A-Z])(?=.*[a-z])(?=.*[@#\$%^&+=])(?=.*\\d).{8,}$")
+        if (!password.matches(passwordPattern)) {
+            Toast.makeText(
+                this,
+                "Password must contain at least 1 uppercase, 1 lowercase, 1 special character, 1 number, and be at least 8 characters long",
+                Toast.LENGTH_LONG
+            ).show()
+            return false
+        }
+        return true
     }
 
     private fun signUp(name: String, email: String, password: String) {
         mAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // User created successfully
                     addUserToDatabase(name, email, mAuth.currentUser?.uid!!)
                     val intent = Intent(this@SignUp, MainActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {
-                    // Check if the exception is due to an existing user
-                    if (task.exception is FirebaseAuthUserCollisionException) {
-                        showAlreadyRegisteredDialog()
-                    } else {
-                        Toast.makeText(this@SignUp, "Something went wrong", Toast.LENGTH_SHORT).show()
-                    }
+                    Toast.makeText(this, "User already exists or signup failed", Toast.LENGTH_SHORT).show()
                 }
             }
-    }
-
-    private fun showAlreadyRegisteredDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("User Already Registered")
-        builder.setMessage("This email is already registered. Please log in instead.")
-        builder.setPositiveButton("Log In") { _, _ ->
-            val intent = Intent(this@SignUp, LogIn::class.java)
-            startActivity(intent)
-            finish()
-        }
-        builder.setNegativeButton("Cancel", null)
-        val dialog = builder.create()
-        dialog.show()
     }
 
     private fun addUserToDatabase(name: String, email: String, uid: String) {
