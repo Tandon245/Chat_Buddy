@@ -36,9 +36,31 @@ Chat Buddy is a real-time chat application built for Android. This app allows us
      }
    }
 
-
+```markdown
 ### Installation
 
 1. Clone the repository:
    ```bash
    git clone https://github.com/Tandon245/Chat_Buddy.git
+   ```
+2. Open the project in Android Studio.
+3. Sync Gradle and build the project.
+
+### Running the App
+
+1. Connect an Android device or start an emulator.
+2. Run the app from Android Studio.
+3. Register a new account or log in with an existing one to start chatting.
+
+### Code Overview
+
+- **ChatActivity**: Main chat screen where messages are sent and displayed.
+- **Firebase Integration**: Uses Firebase Realtime Database for message storage and Firebase Authentication for login.
+- **MessageAdapter**: RecyclerView adapter to display messages.
+- **Message Model**: Represents the structure of each message in Firebase.
+
+### Dependencies
+
+- **Firebase Realtime Database**
+- **Firebase Authentication**
+```
