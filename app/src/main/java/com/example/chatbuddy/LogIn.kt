@@ -2,6 +2,7 @@ package com.example.chatbuddy
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Patterns
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -15,7 +16,6 @@ class LogIn : AppCompatActivity() {
     private lateinit var edtPassword: EditText
     private lateinit var btnLogIn: Button
     private lateinit var btnSignUp: Button
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -34,28 +34,38 @@ class LogIn : AppCompatActivity() {
             startActivity(intent)
         }
 
-
-
         btnLogIn.setOnClickListener {
-            val email = edtEmail.text.toString()
-            val password = edtPassword.text.toString()
-            login(email, password);
+            val email = edtEmail.text.toString().trim()
+            val password = edtPassword.text.toString().trim()
+
+            // Validate input fields
+            if (email.isEmpty()) {
+                edtEmail.error = "Please enter your Email ID"
+                edtEmail.requestFocus()
+            } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                edtEmail.error = "Please enter a valid Email ID"
+                edtEmail.requestFocus()
+            } else if (password.isEmpty()) {
+                edtPassword.error = "Please enter your Password"
+                edtPassword.requestFocus()
+            } else if (password.length < 6) {
+                edtPassword.error = "Password must be at least 6 characters"
+                edtPassword.requestFocus()
+            } else {
+                login(email, password)
+            }
         }
     }
 
     private fun login(email: String, password: String) {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
             if (task.isSuccessful) {
-                intent = Intent(this@LogIn, MainActivity::class.java)
+                val intent = Intent(this@LogIn, MainActivity::class.java)
                 finish()
                 startActivity(intent)
-
             } else {
-                Toast.makeText(this@LogIn, "User does not exist", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@LogIn, "Incorrect email or password", Toast.LENGTH_SHORT).show()
             }
         }
     }
-
 }
-
-
