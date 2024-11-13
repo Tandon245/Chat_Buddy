@@ -3,6 +3,7 @@ package com.example.chatbuddy
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -75,6 +76,7 @@ class ChatActivity : AppCompatActivity() {
                         }
                     }
                     messageAdapter.notifyDataSetChanged()
+                    chatRecyclerView.scrollToPosition(messageList.size - 1)
                 }
 
                 override fun onCancelled(error: DatabaseError) {}
@@ -94,6 +96,10 @@ class ChatActivity : AppCompatActivity() {
 
             // Clear the messageBox after sending
             messageBox.setText("")
+
+            val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.hideSoftInputFromWindow(messageBox.windowToken, 0)
         }
     }
+
 }
