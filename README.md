@@ -63,4 +63,4 @@ Chat Buddy is a real-time chat application built for Android. This app allows us
 
 - **Firebase Realtime Database**
 - **Firebase Authentication**
-```
+
