@@ -1,6 +1,8 @@
 package com.example.chatbuddy
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -13,7 +15,6 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-
 class ChatActivity : AppCompatActivity() {
     private lateinit var chatRecyclerView: RecyclerView
     private lateinit var messageBox: EditText
@@ -24,12 +25,12 @@ class ChatActivity : AppCompatActivity() {
 
     var receiverRoom: String? = null
     var senderRoom: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
         mDbRef = FirebaseDatabase.getInstance().getReference()
-
 
         val name = intent.getStringExtra("name")
         val receiverUid = intent.getStringExtra("uid")
@@ -46,50 +47,53 @@ class ChatActivity : AppCompatActivity() {
         messageList = ArrayList()
         messageAdapter = MessageAdapter(this, messageList)
 
-
-
         chatRecyclerView.layoutManager = LinearLayoutManager(this)
         chatRecyclerView.adapter = messageAdapter
 
+        // Initially disable the send button
+        sendButton.isEnabled = false
 
-        //logic for adding data to recycler view
+        // Add TextWatcher to monitor changes in messageBox and enable/disable sendButton
+        messageBox.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                sendButton.isEnabled = !s.isNullOrEmpty()
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        // Fetch messages from Firebase and update the RecyclerView
         mDbRef.child("chats").child(senderRoom!!).child("messages")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-
-
                     messageList.clear()
                     for (postSnapshot in snapshot.children) {
                         val message = postSnapshot.getValue(Message::class.java)
-                        messageList.add(message!!)
+                        if (message != null) {
+                            messageList.add(message)
+                        }
                     }
                     messageAdapter.notifyDataSetChanged()
                 }
 
-                override fun onCancelled(error: DatabaseError) {
+                override fun onCancelled(error: DatabaseError) {}
+            })
 
-                }
-
-            }
-
-
-            )
-
-
-        //storing the message to the database
-        sendButton.setOnClickListener() {
+        // Store message to database when send button is clicked
+        sendButton.setOnClickListener {
             val message = messageBox.text.toString()
             val messageObject = Message(message, senderUid)
 
+            // Add message to both sender's and receiver's chat rooms
             mDbRef.child("chats").child(senderRoom!!).child("messages").push()
-                .setValue(messageObject).addOnSuccessListener() {
+                .setValue(messageObject).addOnSuccessListener {
                     mDbRef.child("chats").child(receiverRoom!!).child("messages").push()
                         .setValue(messageObject)
                 }
-            //for empty send box after message sent
+
+            // Clear the messageBox after sending
             messageBox.setText("")
-
         }
-
     }
 }

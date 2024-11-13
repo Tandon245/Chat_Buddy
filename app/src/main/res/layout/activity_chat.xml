@@ -22,10 +22,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        android:weightSum="100"
         android:layout_marginBottom="5dp"
-        >
+        android:orientation="horizontal"
+        android:weightSum="100">
 
         <EditText
             android:id="@+id/messageBox"
@@ -36,8 +35,7 @@
             android:background="@drawable/message_box_background"
             android:hint="Type a message"
 
-            android:paddingLeft="10dp"
-            />
+            android:paddingLeft="10dp" />
 
         <ImageView
             android:id="@+id/sentButton"
