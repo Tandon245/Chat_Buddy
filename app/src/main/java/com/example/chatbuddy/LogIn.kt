@@ -29,6 +29,7 @@ class LogIn : AppCompatActivity() {
         edtPassword = findViewById(R.id.edt_password)
         btnLogIn = findViewById(R.id.btnLogIn)
         btnSignUp = findViewById(R.id.btnSignUp)
+
         btnSignUp.setOnClickListener {
             val intent = Intent(this, SignUp::class.java)
             startActivity(intent)
@@ -39,26 +40,35 @@ class LogIn : AppCompatActivity() {
             val password = edtPassword.text.toString().trim()
 
             // Validate input fields
-            if (email.isEmpty()) {
-                edtEmail.error = "Please enter your Email ID"
-                edtEmail.requestFocus()
-            } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                edtEmail.error = "Please enter a valid Email ID"
-                edtEmail.requestFocus()
-            } else if (password.isEmpty()) {
-                edtPassword.error = "Please enter your Password"
-                edtPassword.requestFocus()
-            } else if (password.length < 6) {
-                edtPassword.error = "Password must be at least 6 characters"
-                edtPassword.requestFocus()
-            } else {
-                login(email, password)
+            when {
+                email.isEmpty() -> {
+                    edtEmail.error = "Please enter your Email ID"
+                    edtEmail.requestFocus()
+                }
+                !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
+                    edtEmail.error = "Please enter a valid Email ID"
+                    edtEmail.requestFocus()
+                }
+                password.isEmpty() -> {
+                    edtPassword.error = "Please enter your Password"
+                    edtPassword.requestFocus()
+                }
+                password.length < 6 -> {
+                    edtPassword.error = "Password must be at least 6 characters"
+                    edtPassword.requestFocus()
+                }
+                else -> {
+                    // Call the login function
+                    showLoading(true)
+                    login(email, password)
+                }
             }
         }
     }
 
     private fun login(email: String, password: String) {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
+            showLoading(false) // Hide loading after login attempt
             if (task.isSuccessful) {
                 val intent = Intent(this@LogIn, MainActivity::class.java)
                 finish()
@@ -66,6 +76,17 @@ class LogIn : AppCompatActivity() {
             } else {
                 Toast.makeText(this@LogIn, "Incorrect email or password", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    // Function to toggle loading state on login button
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            btnLogIn.text = "Logging in..."
+            btnLogIn.isEnabled = false
+        } else {
+            btnLogIn.text = "Log In"
+            btnLogIn.isEnabled = true
         }
     }
 }

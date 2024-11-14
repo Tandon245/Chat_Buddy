@@ -37,6 +37,7 @@ class SignUp : AppCompatActivity() {
             val name = edtName.text.toString()
 
             if (validateInput(name, email, password)) {
+                showLoading(true)
                 signUp(name, email, password)
             }
         }
@@ -68,8 +69,11 @@ class SignUp : AppCompatActivity() {
     private fun signUp(name: String, email: String, password: String) {
         mAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
+                showLoading(false) // Hide loader after signup attempt
                 if (task.isSuccessful) {
                     addUserToDatabase(name, email, mAuth.currentUser?.uid!!)
+                    Toast.makeText(this, "Signup successful! Please log in.", Toast.LENGTH_SHORT).show()
+                    // Redirect to Chat activity
                     val intent = Intent(this@SignUp, MainActivity::class.java)
                     startActivity(intent)
                     finish()
@@ -82,5 +86,16 @@ class SignUp : AppCompatActivity() {
     private fun addUserToDatabase(name: String, email: String, uid: String) {
         mDbRef = FirebaseDatabase.getInstance().getReference()
         mDbRef.child("user").child(uid).setValue(User(name, email, uid))
+    }
+
+    // Function to toggle loading state on sign up button
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            btnSignUp.text = "Signing up..."
+            btnSignUp.isEnabled = false
+        } else {
+            btnSignUp.text = "Sign Up"
+            btnSignUp.isEnabled = true
+        }
     }
 }
