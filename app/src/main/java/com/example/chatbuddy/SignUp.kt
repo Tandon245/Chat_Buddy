@@ -93,6 +93,7 @@ class SignUp : AppCompatActivity() {
         if (isLoading) {
             btnSignUp.text = "Signing up..."
             btnSignUp.isEnabled = false
+            btnSignUp.setBackgroundColor(resources.getColor(R.color.grey))
         } else {
             btnSignUp.text = "Sign Up"
             btnSignUp.isEnabled = true

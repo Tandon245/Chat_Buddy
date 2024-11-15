@@ -11,6 +11,9 @@ import com.google.firebase.auth.FirebaseAuth
 
 class LogIn : AppCompatActivity() {
 
+
+
+
     private lateinit var mAuth: FirebaseAuth
     private lateinit var edtEmail: EditText
     private lateinit var edtPassword: EditText
@@ -84,9 +87,11 @@ class LogIn : AppCompatActivity() {
         if (isLoading) {
             btnLogIn.text = "Logging in..."
             btnLogIn.isEnabled = false
+            btnLogIn.setBackgroundColor(resources.getColor(R.color.grey))
         } else {
             btnLogIn.text = "Log In"
             btnLogIn.isEnabled = true
+
         }
     }
 }

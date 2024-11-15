@@ -4,4 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="button_background_color">#32a8a8</color>
     <color name="send_btn_color">#2b1e1d</color>
+    <color name="grey">#B0B0B0</color>
+
+
 </resources>
