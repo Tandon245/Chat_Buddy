@@ -40,8 +40,8 @@ Chat Buddy is a real-time chat application built for Android. This app allows us
 ### Installation
 
 1. Clone the repository:
- 
-   git clone https://github.com/Tandon245/Chat_Buddy.git
+
+    ```git clone https://github.com/Tandon245/Chat_Buddy.git
    ```
 2. Open the project in Android Studio.
 3. Sync Gradle and build the project.
