@@ -1,5 +1,4 @@
 # Chat Buddy
-
 Chat Buddy is a real-time chat application built for Android. This app allows users to connect, chat, and interact with each other using Firebase for backend services. 
 
 ## Features
